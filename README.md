@@ -1,2 +1,2 @@
 # Movie-recommendations
-movie recommendations using collabaritive filtering
+movie recommendations using collaborative filtering
