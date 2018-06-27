@@ -1,35 +1,38 @@
 import pickle
 import sys
 from pprint import pprint
+import numpy as np
+
+with open('dataset/ml-1m/movies.dat',encoding='latin-1') as f:
+    movie_data = f.readlines()
+
+with open('dataset/ml-1m/ratings.dat',encoding='latin-1') as f:
+    rating_data = f.readlines()
 
 movies = {}
-with open('dataset/ml-1m/movies.dat',encoding='latin-1') as f:
-    data = f.readlines()
+for movie in movie_data:
+    mid,name,genres = movie.split('::')
+    genres = genres.split('|')
+    movies[int(mid)] = (name,genres)
 
-for d in data:
-    movie = {}
+num_movies,__,__ = movie_data[-1].split('::')
+num_movies = int(num_movies)
+num_users,__,__,__ = rating_data[-1].split('::')
+num_users = int(num_users)
 
-    movie_id,movie['name'],movie['genre'] = d.split('::')
-    movie['genre'] = movie['genre'].split('|')
-    for i in range(len(movie['genre'])):
-        movie['genre'][i] = movie['genre'][i].rstrip('\n')
+rating_table = np.zeros((num_movies+1,num_users+1))
+print(rating_table.shape)
 
-    movie['genre'] = set(movie['genre'])
+for rating in rating_data:
+    uid,mid,rate,__ = rating.split('::')
+    rating_table[int(mid),int(uid)] = rate
 
-    movies[int(movie_id)] = movie
+for i in range(1,rating_table.shape[1]):
+    rating_table[0,i] = np.sum(rating_table[1:,i])/np.count_nonzero(rating_table[1:,i])
+    rating_table[:,i] = rating_table[:,i] - rating_table[0,i]
 
-ratings = {}
-with open('dataset/ml-1m/ratings.dat',encoding='latin-1') as f:
-    data = f.readlines()
+with open('movie-data.pkl','wb') as f:
+    pickle.dump(movies,f)
 
-for d in data:
-    uid,mid,rating,time = d.split('::')
-    try:
-        movies[int(mid)]['ratings'].append((int(uid),int(rating)))
-    except Exception as e:
-        movies[int(mid)]['ratings'] = [(int(uid),int(rating))]
-
-
-
-#with open('movies-data.pkl','wb') as f:
-#    pickle.dump(movies,f)
+with open('ratings-data.pkl','wb') as f:
+    pickle.dump(rating_table,f)   
