@@ -28,11 +28,10 @@ for rating in rating_data:
     rating_table[int(mid),int(uid)] = rate
 
 for i in range(1,rating_table.shape[1]):
-    rating_table[0,i] = np.sum(rating_table[1:,i])/np.count_nonzero(rating_table[1:,i])
-    rating_table[:,i] = rating_table[:,i] - rating_table[0,i]
+    rating_table[0,i] = round(np.sum(rating_table[1:,i])/np.count_nonzero(rating_table[1:,i]),3)
 
 with open('movie-data.pkl','wb') as f:
     pickle.dump(movies,f)
 
 with open('ratings-data.pkl','wb') as f:
-    pickle.dump(rating_table,f)   
+    pickle.dump(rating_table,f)
