@@ -22,8 +22,17 @@ def get_rating_data():
 	return ratings
 
 def sim(mid1,mid2,ratings):
-	v1 = np.array([ ratings[mid1,i]-ratings[0,i] for i in range(1,ratings.shape[0]) if ratings[mid1,i]!=0 and ratings[mid2,i]!=0])
-	v2 = np.array([ ratings[mid2,i]-ratings[0,i] for i in range(1,ratings.shape[0]) if ratings[mid1,i]!=0 and ratings[mid2,i]!=0])
+	v1 = ratings[mid1,1:]
+	v2 = ratings[mid2,1:]
+	avg = ratings[0,1:]
+
+	ind = np.nonzero(v1*v2)
+
+	v1_new = np.take(v1,ind) - np.take(avg,ind)
+	v2_new = np.take(v2,ind) - np.take(avg,ind)
+
+	v1 = v1_new.flatten()
+	v2 = v2_new.flatten()
 
 	if np.linalg.norm(v1) == 0 or np.linalg.norm(v2) == 0 or v1.shape[0] < 20:
 		return 0
@@ -35,6 +44,8 @@ ratings = get_rating_data()
 k = 30
 
 similar  = np.zeros((ratings.shape[0],k))
+print(similar.shape)
+
 for i in range(1,ratings.shape[0]):
 	lst = []
 	print(f'{i}/{ratings.shape[0]}')
@@ -42,7 +53,8 @@ for i in range(1,ratings.shape[0]):
 		if i != j:
 			lst.append( (j,sim(i,j,ratings)) )
 	lst.sort(reverse=True,key=lambda x:x[1])
-	similar[i,:] = np.array([lst[l][0] for l in range(k)])
+	similar[i] = np.array([lst[l][0] for l in range(k)])
 
+similar = np.array(similar,dtype='int')
 with open('similar-movie-data.pkl','wb') as f:
 	pickle.dump(similar,f)

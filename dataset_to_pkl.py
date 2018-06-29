@@ -13,6 +13,8 @@ movies = {}
 for movie in movie_data:
     mid,name,genres = movie.split('::')
     genres = genres.split('|')
+    for i in range(len(genres)):
+        genres[i] = genres[i].rstrip('\n')
     movies[int(mid)] = (name,genres)
 
 num_movies,__,__ = movie_data[-1].split('::')
@@ -33,5 +35,5 @@ for i in range(1,rating_table.shape[1]):
 with open('movie-data.pkl','wb') as f:
     pickle.dump(movies,f)
 
-with open('ratings-data.pkl','wb') as f:
-    pickle.dump(rating_table,f)
+#with open('ratings-data.pkl','wb') as f:
+#    pickle.dump(rating_table,f)
