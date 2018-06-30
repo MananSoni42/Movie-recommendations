@@ -23,7 +23,7 @@ def sim(mid1,mid2,ratings):
 	v1 = v1_new.flatten()
 	v2 = v2_new.flatten()
 
-	if np.linalg.norm(v1) == 0 or np.linalg.norm(v2) == 0 or v1.shape[0] < 20:
+	if np.linalg.norm(v1) == 0 or np.linalg.norm(v2) == 0:
 		return 0
 	else:
 		return np.dot(v1,v2)/(np.linalg.norm(v1)*np.linalg.norm(v2))
@@ -39,7 +39,10 @@ def predict(uid,mid,ratings,sim_movies):
         denom+= abs(sim(mid,sim_movies[mid,i],ratings))
     if denom == 0:
         return 0
-    return abs(num/denom)
+    return round(abs(num/denom),2)
+
+'''
+#unoptimized
 
 def get_n_rec(uid,n,ratings,movie,sim_movies,genre=None):
     if genre:
@@ -49,13 +52,38 @@ def get_n_rec(uid,n,ratings,movie,sim_movies,genre=None):
         suggestions = np.array([ predict(uid,mid,ratings,sim_movies) if ratings[mid,uid]==0 else 0 for mid in range(1,ratings.shape[0]) ])
         top_n = np.argsort(suggestions)[::-1][:n]
     return top_n
+'''
+def get_n_rec(uid,n,ratings,movie,sim_movies,genre=None):
+
+    ind = list(np.flatnonzero(ratings[1:,uid]))
+    m = 20
+    if len(ind) > m:
+        ind = ind[:m]
+
+    expanded_ind = []
+    for mid in ind:
+        for i in range(sim_movies.shape[1]):
+            expanded_ind.append(sim_movies[mid,i])
+
+    if genre:
+        print(genre)
+        suggestions = [ (mid,predict(uid,mid,ratings,sim_movies)) if (ratings[mid,uid]==0 and genre in movies[mid][1]) else (mid,0) for mid in expanded_ind ]
+        top_n = sorted(suggestions,reverse=True,key=lambda x:x[1])[:n]
+        top_n = [t[0] for t in top_n]
+    else:
+        print('No genre')
+        suggestions = list(set([ (mid,predict(uid,mid,ratings,sim_movies)) if ratings[mid,uid]==0 else (mid,0) for mid in expanded_ind ]))
+        top_n = sorted(suggestions,reverse=True,key=lambda x:x[1])[:n]
+        top_n = [t[0] for t in top_n]
+    return top_n
 
 movies,ratings,sim_movies = get_data()
 
 print('Fetching your Recommendations...')
-recommend = get_n_rec(123,5,ratings,movies,sim_movies)
+recommend = get_n_rec(250,5,ratings,movies,sim_movies,'Comedy')
 
 count = 1
 for mid in recommend:
-    print(f'{count} - {movies[mid][0]}')
+    print(f'{count} - {movies[mid][0]} - {predict(250,mid,ratings,sim_movies)}')
+    print(f'genre - {movies[mid][1]}\n')
     count+=1
