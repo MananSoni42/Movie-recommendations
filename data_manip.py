@@ -137,8 +137,7 @@ def generate_similar_movies(ratings, k=30, out_file='similar-movie-data.pkl'):
     similar = np.zeros((ratings.shape[0], k))
 
     # generate numpy array with top k similar movies for each movie
-    # for i in range(1,ratings.shape[0]):
-    for i in range(1, 100):
+    for i in range(1,ratings.shape[0]):
         lst = []
         print(f'Processing movie {i} out of {ratings.shape[0]}')
         for j in range(1, ratings.shape[0]):

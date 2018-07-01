@@ -1,8 +1,8 @@
+#!/usr/bin/python3
 """ A Basic command line Movie Recommendation Engine. """
 
-#!/usr/bin/python3
-
 import argparse
+import sys
 import pickle
 import numpy as np
 from movie_search import n_closest_str
@@ -23,10 +23,10 @@ def update_ratings(ratings, out_file='ratings-data.pkl'):
     """ Update ratings pickle file with new data. """
     try:
         with open(out_file, 'wb') as f:
-        pickle.dump(ratings, f)
+            pickle.dump(ratings, f)
     except:
         with open(f'backup/{out_file}', 'wb') as f:
-        pickle.dump(ratings, f)
+            pickle.dump(ratings, f)
 
 
 def reset(ratings):
@@ -78,8 +78,8 @@ def recommend(movies, ratings, similar_movies):
     """ Recommend movies to user. """
     num_rated = np.flatnonzero(ratings[:, 0]).shape[0]
 
+    print(f'You have rated {num_rated} movies.')
     if num_rated < 5:
-        print(num_rated)
         print('Rate atleast 5 movies to get recommendations')
         return 0
 
@@ -123,6 +123,11 @@ if __name__ == '__main__':
 
     movies, ratings, similar_movies = get_data_from_pickle()
     arg = parser.parse_args()
+
+    # display help if no arguements are given
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
 
     if arg.search:
         search(movies)
