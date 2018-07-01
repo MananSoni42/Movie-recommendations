@@ -53,12 +53,12 @@ def search(movies):
 
     num = -1
     print(results)
-    while num not in results or num == 0:
+    while num not in results:
         try:
-            num = int(
-                input('Select a movie ID from above choices to rate. (0 to exit): '))
+            num = int(input(
+                'Select a movie ID from above choices to rate. (press enter only to exit): '))
         except:
-            pass
+            return 0
 
     rating = 0
     while rating not in [1, 2, 3, 4, 5]:
