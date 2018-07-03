@@ -4,6 +4,7 @@
 import argparse
 import sys
 import pickle
+from shutil import copyfile
 import numpy as np
 from movie_search import n_closest_str
 from data_manip import get_data_from_pickle
@@ -12,22 +13,18 @@ from collaborative_filtering import get_n_rec
 # add command line arguement parsing
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    '-s', '--search', help='Search for movies by name or movie id and rate it', action='store_true')
+    '-s', '--search', help='Search for movies by name and rate them', action='store_true')
 parser.add_argument(
     '-r', '--recommend', help='Let the system recommend movies to you', action='store_true')
 parser.add_argument(
     '--reset', help='Remove all of your ratings', action='store_true')
 
-
 def update_ratings(ratings, out_file='ratings-data.pkl'):
     """ Update ratings pickle file with new data. """
-    try:
-        with open(out_file, 'wb') as f:
-            pickle.dump(ratings, f)
-    except:
-        with open(f'backup/{out_file}', 'wb') as f:
-            pickle.dump(ratings, f)
+    with open(out_file, 'wb') as f:
+        pickle.dump(ratings, f)
 
+    copyfile(out_file,f'./backup_data/{out_file}')
 
 def reset(ratings):
     """ Remove all user data. """
@@ -67,7 +64,7 @@ def search(movies):
         except:
             pass
 
-    ratings[mid, 0] = rating
+    ratings[num, 0] = rating
 
     update_ratings(ratings)
 
@@ -97,7 +94,7 @@ def recommend(movies, ratings, similar_movies):
         print(f'{mid} - {movies[mid][0]}')
     print('')
 
-    ind = np.flatnonzero(ratings[:, 1])
+    ind = np.flatnonzero(ratings[:, 0])
     genres = {}
     for mid in ind:
         try:

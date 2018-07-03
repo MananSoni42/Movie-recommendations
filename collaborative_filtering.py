@@ -83,7 +83,7 @@ def get_n_rec(uid, n, ratings, movies, sim_movies, genre=None):
     sim_movies - similar movie data from pickle file
     genre(string) - search only within specific genre
     """
-    ind = list(np.flatnonzero(ratings[1:, uid]))
+    ind = list(np.flatnonzero(ratings[:, uid]))
     m = 20
     if len(ind) > m:
         ind = ind[:m]
@@ -106,3 +106,4 @@ def get_n_rec(uid, n, ratings, movies, sim_movies, genre=None):
         top_n = sorted(suggestions, reverse=True, key=lambda x: x[1])[:n]
         top_n = [t[0] for t in top_n]
     return top_n
+    
