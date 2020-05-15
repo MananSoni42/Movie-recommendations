@@ -197,4 +197,4 @@ def get_data_from_pickle():
 if __name__ == '__main__':
     movies = generate_movies()
     ratings = generate_ratings(movies)
-    #generate_similar_movies(ratings)
+    generate_similar_movies(ratings)
