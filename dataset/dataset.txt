@@ -1,0 +1,8 @@
+The dataset is too large for github.
+
+Download the dataset from https://grouplens.org/datasets/movielens/
+
+Datasets downloaded: ml-1m, ml-20m, ml-latest-small
+
+place these in the empty directory - datasets (this directory)
+
