@@ -120,6 +120,7 @@ if __name__ == '__main__':
 
     movies, ratings, similar_movies = get_data_from_pickle()
     arg = parser.parse_args()
+
     # display help if no arguements are given
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)

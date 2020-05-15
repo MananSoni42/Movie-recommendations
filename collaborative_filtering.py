@@ -94,6 +94,7 @@ def get_n_rec(uid, n, ratings, movies, sim_movies, genre=None):
             expanded_ind.append(sim_movies[mid, i])
     expanded_ind = list(set(expanded_ind))
     expanded_ind = [i for i in expanded_ind if i != 0]
+
     if genre:
         suggestions = [(mid, predict(uid, mid, ratings, sim_movies)) if (
             ratings[mid, uid] == 0 and genre in movies[mid][1]) else (mid, 0) for mid in expanded_ind]
